@@ -1,0 +1,85 @@
+version: '3'
+
+services:
+  nginx:
+    image: pyslackers/web-nginx:latest
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.nginx
+    depends_on:
+      - web
+    env_file:
+      - /etc/defaults/pyslackersweb
+    volumes:
+      - collected_static:/var/www/web:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: always
+
+  web:
+    image: pyslackers/web:latest
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    #    logging:
+    #      driver: syslog
+    command: sh -c 'python manage.py migrate && gunicorn --config gunicorn.conf website.wsgi:application'
+    depends_on:
+      - postgres.db
+      - redis.db
+    env_file:
+      - /etc/defaults/pyslackersweb
+    restart: unless-stopped
+    volumes:
+      - collected_static:/app/collected-static
+    expose:
+      - "8000"
+
+  worker:
+    image: pyslackers/web:latest
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    #    logging:
+    #      driver: syslog
+    command: celery -A website worker -l info -B --scheduler django
+    # If/When we need the separate scheduler, swap ^ for the below
+    # command: celery -A website worker -l info
+    depends_on:
+      - postgres.db
+      - redis.db
+    env_file:
+      - /etc/defaults/pyslackersweb
+    restart: unless-stopped
+
+  # for now we don't need a separate scheduler
+  #  scheduler:
+  #    image: pyslackers/web:latest
+  #    build:
+  #      context: ..
+  #      dockerfile: docker/Dockerfile
+  #    #    logging:
+  #    #      driver: syslog
+  #    depends_on:
+  #      - postgres.db
+  #      - redis.db
+  #    env_file:
+  #      - /etc/defaults/pyslackersweb
+  #    command: celery -A website beat -l info --scheduler django
+
+  postgres.db:
+    image: postgres:9.6-alpine
+    restart: always
+    volumes:
+      - /home/pyslackersweb/cache/postgresql:/var/lib/postgresql
+
+  redis.db:
+    image: redis:3-alpine
+    restart: always
+    volumes:
+      - /home/pyslackersweb/cache/redis:/var/lib/redis
+
+volumes:
+  collected_static:
+    driver: local

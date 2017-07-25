@@ -1,0 +1,2 @@
+FROM nginx:1.13.3-alpine
+COPY docker/pyslackers.site /etc/nginx/nginx.conf
