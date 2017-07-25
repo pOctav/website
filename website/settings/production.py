@@ -30,15 +30,10 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'standard',
         },
-        'syslog': {
-            'class': 'logging.handlers.SysLogHandler',
-            'formatter': 'standard',
-            'facility': 'user',
-        }
     },
     'loggers': {
         '': {
-            'handlers': ['console', 'syslog'],
+            'handlers': ['console'],
             'level': 'INFO',
             'disabled': False,
             'propagate': True,
