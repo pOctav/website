@@ -116,7 +116,7 @@ STATIC_ROOT = str(BASE_DIR / 'collected-static')
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    str(BASE_DIR / 'static'),
+    # str(BASE_DIR / 'static'),
 ]
 
 TEMPLATES = [

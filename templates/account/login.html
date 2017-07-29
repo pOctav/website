@@ -1,0 +1,42 @@
+{% extends "account/base.html" %}
+
+{% load i18n account socialaccount %}
+
+{% block title %}{% trans "Sign In" %}{% endblock %}
+
+{% get_providers as socialaccount_providers %}
+
+{% block body %}
+    <div class="ui middle aligned center aligned grid">
+        <div class="column">
+            <h2 class="ui header">Log In</h2>
+
+            <form class="ui stacked segment">
+                <div class="field">
+                    <div class="ui left icon input">
+                        <i class="user icon"></i>
+                        <input name="email" placeholder="Username or Email" type="text"/>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui left icon input">
+                        <i class="lock icon"></i>
+                        <input name="Password" placeholder="Password" type="password"/>
+                    </div>
+                </div>
+                <div class="ui fluid large submit button">Login</div>
+            </form>
+        </div>
+    </div>
+
+{#    <div class="ui container">#}
+{#        <div class="ui one center grid">#}
+{#            {% for provider in socialaccount_providers %}#}
+{#                <div>#}
+{#                    <a href="{% provider_login_url provider.id process='login' scope=scope auth_params=auth_params %}">Sign#}
+{#                        in with {{ provider.name }}</a>#}
+{#                </div>#}
+{#            {% endfor %}#}
+{#        </div>#}
+{#    </div>#}
+{% endblock %}
